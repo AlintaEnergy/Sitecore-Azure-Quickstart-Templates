@@ -1155,7 +1155,7 @@
           "dependsOn": [ "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]" ]
         },
         {
-          "type": "Microsoft.Sql/servers/elasticPools",
+          "type": "elasticPools",
           "apiVersion": "[variables('elasticPoolApiVersion')]",
           "location": "[parameters('location')]",
           "name": "[variables('sqlElasticPoolNameTidy')]",
