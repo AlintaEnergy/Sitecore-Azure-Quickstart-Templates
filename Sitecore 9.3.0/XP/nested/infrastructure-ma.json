@@ -6,6 +6,7 @@
     "dbApiVersion": "2014-04-01-preview",
 
     "sqlServerNameTidy": "[toLower(trim(parameters('sqlServerName')))]",
+    "sqlElasticPoolNameTidy": "[concat(variables('sqlServerNameTidy'),'pool')]",   // Alinta Specific SKUs use a single Elastic Pool to group
 
     "maSqlDatabaseNameTidy": "[toLower(trim(parameters('maSqlDatabaseName')))]",
 
@@ -33,10 +34,10 @@
     },
     "sitecoreSKU": {
       "type": "string",
-      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large" ],
-      "defaultValue": "Extra Small",
+      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large", "Alinta NonProd", "Alinta Prod" ],
+      "defaultValue": "Alinta NonProd",
       "metadata": {
-        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources"
+        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources.  This has been modified to include Alinta Specific Sizing"
       }
     },
 
@@ -112,7 +113,21 @@
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "S1"
           }
-        }
+        },
+        "Alinta Prod": {
+          "maSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          }
+        },
+        "Alinta NonProd": {
+          "maSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          }
+        }        
       }
     },
     "resourceSizes": {
@@ -130,7 +145,8 @@
         "edition": "[parameters('resourceSizes').maSqlDatabase.Edition]",
         "collation": "[parameters('sqlDatabaseCollation')]",
         "maxSizeBytes": "[parameters('resourceSizes').maSqlDatabase.MaxSize]",
-        "requestedServiceObjectiveName": "[parameters('resourceSizes').maSqlDatabase.ServiceObjectiveLevel]"
+        "requestedServiceObjectiveName": "[parameters('resourceSizes').maSqlDatabase.ServiceObjectiveLevel]",
+        "elasticPoolName":"[if(contains(parameters('sitecoreSKU'), 'Alinta'), variables('sqlElasticPoolNameTidy'), json('null'))]"  // Alinta SKU Map uses an Elastic Pool        
       },
       "resources": [
         {

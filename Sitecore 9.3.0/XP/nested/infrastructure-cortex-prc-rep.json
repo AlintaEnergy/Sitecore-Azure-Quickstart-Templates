@@ -6,6 +6,7 @@
     "dbApiVersion": "2014-04-01-preview",
 
     "sqlServerNameTidy": "[toLower(trim(parameters('sqlServerName')))]",
+    "sqlElasticPoolNameTidy": "[concat(variables('sqlServerNameTidy'),'pool')]",   // Alinta Specific SKUs use a single Elastic Pool to group
 
     "processingEngineTasksSqlDatabaseNameTidy": "[toLower(trim(parameters('processingEngineTasksSqlDatabaseName')))]",
     "processingEngineStorageSqlDatabaseNameTidy": "[toLower(trim(parameters('processingEngineStorageSqlDatabaseName')))]",
@@ -38,10 +39,10 @@
     },
     "sitecoreSKU": {
       "type": "string",
-      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large" ],
-      "defaultValue": "Extra Small",
+      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large", "Alinta NonProd", "Alinta Prod" ],
+      "defaultValue": "Alinta NonProd",
       "metadata": {
-        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources"
+        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources.  This has been modified to include Alinta Specific Sizing"
       }
     },
 
@@ -182,7 +183,41 @@
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "S3"
           }
-        }
+        },
+        "Alinta Prod": {
+          "processingEngineTasksSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          },
+          "processingEngineStorageSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          },
+          "reportingSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "S6"
+          }
+        },
+        "Alinta NonProd": {
+          "processingEngineTasksSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          },
+          "processingEngineStorageSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "ElasticPool"
+          },
+          "reportingSqlDatabase": {
+            "Edition": "Standard",
+            "MaxSize": "268435456000",
+            "ServiceObjectiveLevel": "S3"
+          }
+        }        
       }
     },
     "resourceSizes": {
@@ -200,7 +235,8 @@
         "edition": "[parameters('resourceSizes').processingEngineTasksSqlDataBase.Edition]",
         "collation": "[parameters('sqlDatabaseCollation')]",
         "maxSizeBytes": "[parameters('resourceSizes').processingEngineTasksSqlDataBase.MaxSize]",
-        "requestedServiceObjectiveName": "[parameters('resourceSizes').processingEngineTasksSqlDataBase.ServiceObjectiveLevel]"
+        "requestedServiceObjectiveName": "[parameters('resourceSizes').processingEngineTasksSqlDataBase.ServiceObjectiveLevel]",
+        "elasticPoolName":"[if(contains(parameters('sitecoreSKU'), 'Alinta'), variables('sqlElasticPoolNameTidy'), json('null'))]"  // Alinta SKU Map uses an Elastic Pool
       },
       "resources": [
         {
@@ -229,7 +265,8 @@
         "edition": "[parameters('resourceSizes').processingEngineStorageSqlDataBase.Edition]",
         "collation": "[parameters('sqlDatabaseCollation')]",
         "maxSizeBytes": "[parameters('resourceSizes').processingEngineStorageSqlDataBase.MaxSize]",
-        "requestedServiceObjectiveName": "[parameters('resourceSizes').processingEngineStorageSqlDataBase.ServiceObjectiveLevel]"
+        "requestedServiceObjectiveName": "[parameters('resourceSizes').processingEngineStorageSqlDataBase.ServiceObjectiveLevel]",
+        "elasticPoolName":"[if(contains(parameters('sitecoreSKU'), 'Alinta'), variables('sqlElasticPoolNameTidy'), json('null'))]"  // Alinta SKU Map uses an Elastic Pool
       },
       "resources": [
         {
