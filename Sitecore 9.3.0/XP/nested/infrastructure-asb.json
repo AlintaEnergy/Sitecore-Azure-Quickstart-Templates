@@ -4,7 +4,11 @@
   "parameters": {
     "deploymentId": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]"
+      "maxLength": 21,
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "DeploymentId will be the default base for creating resource names.  Max length of 21 to ensure resources with naming restrictions (e.g. StorageAccounts, KeyVaults) are not impacted."
+      }
     },
     "location": {
       "type": "string",

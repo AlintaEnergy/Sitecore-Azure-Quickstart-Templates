@@ -1,0 +1,121 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+
+    "keyVaultNameTidy": "[toLower(trim(parameters('keyVaultName')))]",
+    "storageAccountNameTidy": "[toLower(trim(parameters('storageAccountName')))]",
+
+    "sitecoreTags": {
+      "provider": "Alinta",
+      "util": "utility"  
+    }
+  },
+  "parameters": {
+    "deploymentId": {
+      "type": "string",
+      "maxLength": 21,
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "DeploymentId will be the default base for creating resource names.  Max length of 21 to ensure resources with naming restrictions (e.g. StorageAccounts, KeyVaults) are not impacted."
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "sitecoreSKU": {
+      "type": "string",
+      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large", "Alinta NonProd", "Alinta Prod" ],
+      "defaultValue": "Alinta NonProd",
+      "metadata": {
+        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources.  This has been modified to include Alinta Specific Sizing"
+      }
+    },
+
+    "keyVaultName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "defaultValue": "[concat(parameters('deploymentId'), '-kv')]"
+    },
+
+    "storageAccountName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "defaultValue": "[replace(concat(parameters('deploymentId'), 'st'),'-','')]"
+    },
+
+    "skuMap": {
+      "type": "secureObject",
+      "defaultValue": {
+        "Alinta Prod": {
+          "storageAccount": {
+            "sku": "Standard_LRS",
+            "accessTier": "Hot"
+          },
+          "keyVault": {
+            "skuFamily": "A",
+            "skuName": "Standard"
+          }          
+        },
+        "Alinta NonProd": {
+          "storageAccount": {
+            "sku": "Standard_LRS",
+            "accessTier": "Hot"
+          },
+          "keyVault": {
+            "skuFamily": "A",
+            "skuName": "Standard"
+          }               
+        }        
+      }
+    },
+    "resourceSizes": {
+      "type": "object",
+      "defaultValue": "[parameters('skuMap')[parameters('sitecoreSKU')]]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2019-04-01",
+      "name": "[variables('storageAccountNameTidy')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('resourceSizes').storageAccount.sku]"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "[parameters('resourceSizes').storageAccount.accessTier]",
+        "supportsHttpsTrafficOnly": true
+      },
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').util]"
+      }      
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2018-02-14",
+      "name": "[variables('keyVaultNameTidy')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "family": "[parameters('resourceSizes').keyVault.skuFamily]",
+          "name": "[parameters('resourceSizes').keyVault.skuName]"
+        }, 
+        "enabledForTemplateDeployment": true,
+        "enableSoftDelete": true
+        // TO DO - probably need some form of access policy defined as well
+      },
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').util]"
+      }        
+    }
+  ]
+}
