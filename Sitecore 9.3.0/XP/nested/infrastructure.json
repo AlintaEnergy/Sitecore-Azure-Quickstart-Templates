@@ -1202,7 +1202,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1237,7 +1237,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1271,7 +1271,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1305,7 +1305,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1339,7 +1339,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1373,7 +1373,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
@@ -1407,7 +1407,7 @@
           "location": "[parameters('location')]",
           "dependsOn": [ 
             "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'))]",
-            "[resourceId('Microsoft.Sql/servers', variables('sqlServerNameTidy'), 'elasticpools', variables('sqlElasticPoolNameTidy'))]"
+            "[resourceId('Microsoft.Sql/servers/elasticPools', variables('sqlServerNameTidy'), variables('sqlElasticPoolNameTidy'))]"
           ],
           "tags": {
             "provider": "[variables('sitecoreTags').provider]",
