@@ -740,6 +740,12 @@
       "type": "string",
       "minLength": 1,
       "defaultValue": "[concat(parameters('deploymentId'), '-asb')]"
+    },
+    "svcPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object ID of the Service Principal that will be granted access to the Azure Key Vault."
+      }
     }
   },
   "resources": [
@@ -1113,6 +1119,9 @@
           "deploymentId": {
             "value": "[parameters('deploymentId')]"
           },
+          "svcPrincipalId": {
+            "value": "[parameters('svcPrincipalId')]"
+          },          
           "location": {
             "value": "[parameters('location')]"
           },

@@ -335,12 +335,12 @@
             "ServiceObjectiveLevel": "ElasticPool"
           },
           "xcShard0SqlDatabase": {
-            "Edition": "Premium",
+            "Edition": "Standard",
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "ElasticPool"
           },
           "xcShard1SqlDatabase": {
-            "Edition": "Premium",
+            "Edition": "Standard",
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "ElasticPool"
           }
@@ -365,12 +365,12 @@
             "ServiceObjectiveLevel": "ElasticPool"
           },
           "xcShard0SqlDatabase": {
-            "Edition": "Premium",
+            "Edition": "Standard",
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "ElasticPool"
           },
           "xcShard1SqlDatabase": {
-            "Edition": "Premium",
+            "Edition": "Standard",
             "MaxSize": "268435456000",
             "ServiceObjectiveLevel": "ElasticPool"
           }

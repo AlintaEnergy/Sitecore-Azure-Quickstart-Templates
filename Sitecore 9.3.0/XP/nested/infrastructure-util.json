@@ -20,6 +20,12 @@
         "description": "DeploymentId will be the default base for creating resource names.  Max length of 21 to ensure resources with naming restrictions (e.g. StorageAccounts, KeyVaults) are not impacted."
       }
     },
+    "svcPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object ID of the Service Principal that will be granted access to the Azure Key Vault."
+      }
+    },    
     "location": {
       "type": "string",
       "minLength": 1,
@@ -109,8 +115,77 @@
           "name": "[parameters('resourceSizes').keyVault.skuName]"
         }, 
         "enabledForTemplateDeployment": true,
-        "enableSoftDelete": true
-        // TO DO - probably need some form of access policy defined as well
+        "enableSoftDelete": true,
+        "accessPolicies": [
+              {
+                "tenantId": "[subscription().tenantId]",
+                "objectId": "[parameters('svcPrincipalId')]",
+                "permissions": {
+                  "keys": [
+                    "encrypt", 
+                    "decrypt", 
+                    "wrapKey", 
+                    "unwrapKey", 
+                    "sign", 
+                    "verify", 
+                    "get", 
+                    "list", 
+                    "create",
+                    "update", 
+                    "import", 
+                    "delete", 
+                    "backup", 
+                    "restore", 
+                    "recover", 
+                    "purge"
+                  ],
+                  "secrets": [
+                    "get", 
+                    "list", 
+                    "set",
+                    "delete",
+                    "backup",
+                    "restore",
+                    "recover",
+                    "purge"
+                  ],
+                  "certificates": [
+                    "get", 
+                    "list", 
+                    "delete", 
+                    "create", 
+                    "import", 
+                    "update", 
+                    "managecontacts", 
+                    "getissuers", 
+                    "listissuers", 
+                    "setissuers", 
+                    "deleteissuers", 
+                    "manageissuers", 
+                    "recover", 
+                    "purge", 
+                    "backup", 
+                    "restore"
+                  ],
+                  "storage": [
+                    "get", 
+                    "list", 
+                    "delete", 
+                    "set", 
+                    "update", 
+                    "regeneratekey", 
+                    "recover", 
+                    "purge", 
+                    "backup", 
+                    "restore", 
+                    "setsas", 
+                    "listsas", 
+                    "getsas", 
+                    "deletesas"
+                  ]
+                }
+              }
+            ]
       },
       "tags": {
         "provider": "[variables('sitecoreTags').provider]",

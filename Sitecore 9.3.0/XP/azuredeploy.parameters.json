@@ -82,6 +82,9 @@
     },
     "machineLearningServerEndpointCertificationAuthorityCertificatePath": {
       "value": ""
+    },
+    "svcPrincipalId": {
+      "value": ""
     }
   }
 }
