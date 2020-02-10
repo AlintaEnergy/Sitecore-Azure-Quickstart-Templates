@@ -734,13 +734,9 @@
             "SkuCapacity": 1
           },
           "cdHostingPlan": {
-            "SkuName": "S3",
+            "SkuName": "P3v2",
             "SkuCapacity": 2
-          },
-          "cdSeshHostingPlan": {
-            "SkuName": "P2v2",
-            "SkuCapacity": 1
-          },          
+          },       
           "prcHostingPlan": {
             "SkuName": "P1v2",
             "SkuCapacity": 1
@@ -819,11 +815,7 @@
           "cdHostingPlan": {
             "SkuName": "P2v2",
             "SkuCapacity": 1
-          },
-          "cdSeshHostingPlan": {
-            "SkuName": "P1v2",
-            "SkuCapacity": 1
-          },          
+          },        
           "prcHostingPlan": {
             "SkuName": "P1v2",
             "SkuCapacity": 1

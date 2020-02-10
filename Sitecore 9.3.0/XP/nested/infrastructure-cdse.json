@@ -1,0 +1,190 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "webApiVersion": "2018-02-01",
+    "serverFarmApiVersion": "2018-02-01",
+
+    "cdseHostingPlanNameTidy": "[toLower(trim(parameters('cdseHostingPlanName')))]",
+
+    "cdseWebAppNameTidy": "[toLower(trim(parameters('cdseWebAppName')))]",
+
+    "sitecoreTags": {
+      "provider": "b51535c2-ab3e-4a68-95f8-e2e3c9a19299",
+      "cdse": "cdse"
+    },
+
+    "useAse": "[not(empty(parameters('aseName')))]",
+    "aseResourceId": "[resourceId(parameters('aseResourceGroupName'), 'Microsoft.Web/hostingEnvironments', parameters('aseName'))]",
+    "aseHostingEnvironmentProfile": {
+      "id": "[variables('aseResourceId')]"
+    }
+  },
+  "parameters": {
+    "deploymentId": {
+      "type": "string",
+      "maxLength": 21,
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "DeploymentId will be the default base for creating resource names.  Max length of 21 to ensure resources with naming restrictions (e.g. StorageAccounts, KeyVaults) are not impacted."
+      }
+    },
+    "location": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "sitecoreSKU": {
+      "type": "string",
+      "allowedValues": [ "Extra Small", "Small", "Medium", "Large", "Extra Large", "Alinta NonProd", "Alinta Prod" ],
+      "defaultValue": "Alinta NonProd",
+      "metadata": {
+        "description": "Sitecore SKU controls the sizes and service levels of the provisioned resources.  This has been modified to include Alinta Specific Sizing"
+      }
+    },
+
+    "cdseHostingPlanName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat(parameters('deploymentId'), '-cdse-hp')]"
+    },
+
+    "cdseWebAppName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "[concat(parameters('deploymentId'), '-cdse')]"
+    },
+
+
+    "skuMap": {
+      "type": "secureObject",
+      "defaultValue": {
+        "Extra Small": {
+          "cdseHostingPlan": {
+            "SkuName": "S2",
+            "SkuCapacity": 1
+          },
+          "cdseHostingPlanIsolated": {
+            "SkuName": "I1",
+            "SkuCapacity": 1
+          }
+        },
+        "Small": {
+          "cdseHostingPlan": {
+            "SkuName": "S2",
+            "SkuCapacity": 2
+          },
+          "cdseHostingPlanIsolated": {
+            "SkuName": "I2",
+            "SkuCapacity": 1
+          }
+        },
+        "Medium": {
+          "cdseHostingPlan": {
+            "SkuName": "S2",
+            "SkuCapacity": 3
+          },
+          "cdseHostingPlanIsolated": {
+            "SkuName": "I2",
+            "SkuCapacity": 2
+          }
+        },
+        "Large": {
+          "cdseHostingPlan": {
+            "SkuName": "S3",
+            "SkuCapacity": 4
+          },
+          "cdseHostingPlanIsolated": {
+            "SkuName": "I3",
+            "SkuCapacity": 2
+          }
+        },
+        "Extra Large": {
+          "cdseHostingPlan": {
+            "SkuName": "S3",
+            "SkuCapacity": 8
+          },
+          "cdseHostingPlanIsolated": {
+            "SkuName": "I3",
+            "SkuCapacity": 4
+          }
+        },
+        "Alinta Prod": {
+          "cdseHostingPlan": {
+            "SkuName": "P2v2",
+            "SkuCapacity": 1
+          }
+        },
+        "Alinta NonProd": {
+          "cdseHostingPlan": {
+            "SkuName": "P1v2",
+            "SkuCapacity": 1
+          }
+        }
+      }
+    },
+    "resourceSizes": {
+      "type": "object",
+      "defaultValue": "[parameters('skuMap')[parameters('sitecoreSKU')]]"
+    },
+    "aseName":{
+      "type": "string",
+      "defaultValue": ""
+    },
+    "aseResourceGroupName":{
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('cdseHostingPlanNameTidy')]",
+      "apiVersion": "[variables('serverFarmApiVersion')]",
+      "sku": {
+        "name": "[if(not(variables('useAse')), parameters('resourceSizes').cdseHostingPlan.SkuName, parameters('resourceSizes').cdseHostingPlanIsolated.SkuName)]",
+        "capacity": "[if(not(variables('useAse')), parameters('resourceSizes').cdseHostingPlan.SkuCapacity, parameters('resourceSizes').cdseHostingPlanIsolated.SkuCapacity)]"
+      },
+      "properties": {
+        "name": "[variables('cdseHostingPlanNameTidy')]",
+        "hostingEnvironmentProfile": "[if(variables('useAse'), variables('aseHostingEnvironmentProfile'), '')]"
+      },
+      "location": "[parameters('location')]",
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').cdse]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('cdseWebAppNameTidy')]",
+      "apiVersion": "[variables('webApiVersion')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('cdseHostingPlanNameTidy'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": false,
+          "alwaysOn": true,
+          "phpVersion": "",
+          "defaultDocuments": [
+            "index.html"
+          ]
+        }
+      },
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('cdseHostingPlanNameTidy'))]"
+      ],
+      "tags": {
+        "provider": "[variables('sitecoreTags').provider]",
+        "logicalName": "[variables('sitecoreTags').cdse]"
+      }
+    }
+  ],
+  "outputs": {
+    "infrastructure": {
+      "type": "object",
+      "value": {
+      }
+    }
+  }
+}
