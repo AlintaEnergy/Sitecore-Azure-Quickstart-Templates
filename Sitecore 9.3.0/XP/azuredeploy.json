@@ -2139,13 +2139,13 @@
     },
     {
       "apiVersion": "[variables('resourcesApiVersion')]",
-      "name": "[concat(parameters('deploymentId'), '-application')]",
+      "name": "[concat(parameters('deploymentId'), '-application-cdse')]",
       "condition": "[parameters('deployPlatform')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(parameters('templateLinkBase'), 'nested/application.json'), parameters('templateLinkAccessToken'))]"
+          "uri": "[concat(uri(parameters('templateLinkBase'), 'nested/application-cdse.json'), parameters('templateLinkAccessToken'))]"
         },
         "parameters": {
           "infrastructure": {
