@@ -2399,7 +2399,8 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', concat(parameters('deploymentId'), '-infrastructure-cdse'))]"
+        "[resourceId('Microsoft.Resources/deployments', concat(parameters('deploymentId'), '-infrastructure-cdse'))]",
+        "[resourceId('Microsoft.Resources/deployments', concat(parameters('deploymentId'), '-application'))]"        
       ]
     },    
     {
